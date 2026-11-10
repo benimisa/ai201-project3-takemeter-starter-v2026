@@ -1,0 +1,54 @@
+{
+  "seed": 42,
+  "n_test": 30,
+  "accuracy": 1.0,
+  "f1_macro": 1.0,
+  "per_label": {
+    "strategy": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 10
+    },
+    "hot_take": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 10
+    },
+    "troubleshooting": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 10
+    }
+  },
+  "confusion": {
+    "strategy": {
+      "strategy": 10,
+      "hot_take": 0,
+      "troubleshooting": 0
+    },
+    "hot_take": {
+      "strategy": 0,
+      "hot_take": 10,
+      "troubleshooting": 0
+    },
+    "troubleshooting": {
+      "strategy": 0,
+      "hot_take": 0,
+      "troubleshooting": 10
+    }
+  },
+  "confidence": {
+    "mean_when_right": 0.48839080333709717,
+    "mean_when_wrong": null,
+    "accuracy_most_confident_third": 1.0,
+    "accuracy_least_confident_third": 1.0,
+    "n_per_third": 10
+  },
+  "device": "cpu",
+  "device_name": "CPU",
+  "torch_version": "2.14.1+cpu",
+  "max_length": 128
+}
