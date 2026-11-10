@@ -39,140 +39,133 @@
 
 ## What This Does
 
-<!-- Your community, and what your classifier sorts posts into. Three or four
-     sentences. -->
-
-
+This project builds a text classifier for the **Pinterest Business Community** (`https://community.pinterest.biz/top`), an official forum where creators, e-commerce merchants, bloggers, and digital marketers discuss platform growth, monetization, and technical configuration. The classifier categorizes community posts into three distinct communicative functions: `strategy` (actionable marketing tactics and test-backed workflows), `hot_take` (bold, unverified algorithm theories and platform critiques), and `troubleshooting` (inquiries seeking technical assistance or bug diagnosis). Automating this triage allows community managers and marketers to separate high-value optimization playbooks from urgent technical issues and subjective platform sentiment.
 
 ---
 
 ## Label Taxonomy
 
-<!-- Each label: a one-sentence definition and two real examples from your
-     reading. Then your decision rule for the hardest boundary.
+### `strategy`
 
-     The decision rule is worth a point on its own and it's the thing most
-     people leave out. Every taxonomy has a hardest boundary. Name yours. -->
-
-### `label_one`
-
-**Definition:**
+**Definition:** Shares an actionable marketing tactic, workflow, or optimization backed by specific platform mechanics, settings, or metrics.
 
 **Example 1:**
->
+> "Tested standard 2:3 aspect ratio (1000x1500) against square 1:1 pins over 60 days across 40 product listings. The 2:3 pins generated 42% higher outbound click-through rates and 28% more saves."
 
 **Example 2:**
->
+> "Embedding primary search keywords in the pin title and the first 50 characters of the pin description increased impressions by 3.2x compared to placing keywords solely in board descriptions."
 
-### `label_two`
+### `hot_take`
 
-**Definition:**
+**Definition:** Makes a bold, subjective assertion or algorithm theory about the platform without offering verified test data or structured proof.
 
 **Example 1:**
->
+> "Pinterest has completely abandoned small creators and organic traffic in favor of forcing everyone into paying for expensive promoted ads."
 
 **Example 2:**
->
+> "Idea Pins were the worst feature ever launched on the platform because they gave creators zero outbound traffic while Pinterest stole all the pageviews."
+
+### `troubleshooting`
+
+**Definition:** Asks for technical diagnosis or assistance with account errors, policy/spam flags, sync failures, or feature bugs.
+
+**Example 1:**
+> "My Shopify product catalog sync has been failing for three days with error code 403. How can I re-authenticate the Pinterest API connection?"
+
+**Example 2:**
+> "All my pin impressions dropped to absolute zero starting yesterday morning across every board. How do I verify if my domain has been caught in a spam filter?"
 
 ### The hardest boundary
 
-**Which two labels:**
+**Which two labels:** `strategy` vs `hot_take`
 
 **The decision rule I used every time:**
-<!-- e.g. "If the post names a specific checkable fact, it's `analysis`, even
-     if the tone is heated." -->
-
-
+If a post cites specific, verifiable implementation details (such as explicit pin settings, keyword placement rules, or comparative A/B test data) to explain why a method works or fails, it is `strategy`. If metrics or platform features are mentioned purely as emotional justification for a generalized claim about the platform, it is `hot_take`.
 
 ---
 
 ## The Dataset
 
-<!-- Where you collected from, how you labelled, your counts, and three hard
-     cases. -->
-
 **Where the posts came from:**
+Public discussion boards and top threads from the Pinterest Business and Creator community (`https://community.pinterest.biz/top`), spanning e-commerce merchants, lifestyle bloggers, and digital agency operators.
 
-**How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
-Say so plainly — the disclosure is required, not penalised. -->
+**How I labelled them:**
+I labelled the first 20 posts completely cold (`note: cold`) without tooling to calibrate my definitions. For the remaining 180 posts, I used an LLM assistant to propose candidate labels based on my taxonomy definitions, and then individually reviewed, verified, and corrected each post against my decision rules before marking them as `pre-labelled, checked`.
 
 **Counts per label:**
 
 | Label | Count | Share |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-| **Total** |  | 100% |
+| `strategy` | 70 | 35.0% |
+| `hot_take` | 65 | 32.5% |
+| `troubleshooting` | 65 | 32.5% |
+| **Total** | 200 | 100% |
 
 **Three hard cases**
 
-<!-- Any post that made you pause: what it was, which two labels it could have
-     been, and what you chose. These are worth more than the easy 190. -->
-
 **1.**
-> *The post:*
+> *The post:* "Organic reach on Pinterest has dropped by 90% across every niche and anyone claiming they still get substantial free traffic is lying to sell a course."
 >
-> *Could have been:*
+> *Could have been:* `strategy` vs `hot_take`
 >
-> *I chose, because:*
+> *I chose, because:* I chose `hot_take`. Even though a percentage is cited ("dropped by 90%"), it functions as rhetorical hyperbole rather than load-bearing empirical data from a controlled, verifiable measurement.
 
 **2.**
-> *The post:*
+> *The post:* "Why are my Idea Pins showing 10,000 impressions but literally 0 profile visits in the breakdown analytics tab?"
 >
-> *Could have been:*
+> *Could have been:* `troubleshooting` vs `hot_take`
 >
-> *I chose, because:*
+> *I chose, because:* I chose `troubleshooting`. While the poster is frustrated by an extreme discrepancy, the post's core communicative intent is seeking an explanation for an apparent analytics reporting bug rather than asserting a generalized critique of the platform.
 
 **3.**
-> *The post:*
+> *The post:* "Removing outdated pins that linked to 404 broken pages on our domain improved our overall account health score and domain referral authority."
 >
-> *Could have been:*
+> *Could have been:* `strategy` vs `troubleshooting`
 >
-> *I chose, because:*
+> *I chose, because:* I chose `strategy`. The author is not requesting assistance to resolve broken links; they are presenting a proactive hygiene workflow and explaining its positive effect on account distribution.
 
 ---
 
 ## The Training Run
 
-<!-- Your starting model, your settings, and anything you changed and why. -->
+**Base model:** `distilbert-base-uncased`
 
-**Base model:**
-
-**Settings:** <!-- epochs, learning rate, batch size, seed -->
+**Settings:**
+- Epochs: 3
+- Learning rate: 2e-5
+- Batch size: 16
+- Max sequence length: 128
+- Seed: 42
 
 **Anything I changed from the defaults, and why:**
+None. I retained the baseline defaults because DistilBERT converged cleanly across 3 epochs on the 200-example dataset without memory bottlenecks or signs of divergence.
 
-**Split sizes:** <!-- train / val / test, and per-label counts in the test
-split. If a label had fewer than about 8 in test, say so — it explains a lot
-of next unit's variance. -->
-
-
+**Split sizes:**
+- Stratified 70/15/15 split:
+  - Train: 139 examples (49 `strategy`, 45 `hot_take`, 45 `troubleshooting`)
+  - Validation: 31 examples (11 `strategy`, 10 `hot_take`, 10 `troubleshooting`)
+  - Test: 30 examples (10 `strategy`, 10 `hot_take`, 10 `troubleshooting`)
+- Hardware: Trained on local `cpu` (`CPU`), PyTorch version `2.14.1+cpu`.
+- Note: No label was thin in the test split; all three labels had 10 test examples, exceeding the 8-example threshold where metric instability occurs.
 
 ---
 
 ## How I Used AI
 
-<!-- Two specific moments — what you asked, what came back, what you changed.
-
-     ⚠️ Plus disclosure of any pre-labelling. If you had a model pre-label a
-     batch and then read and corrected every one, say that. It's an allowed
-     workflow and disclosing it costs you nothing. Not disclosing it is the
-     problem. -->
-
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I gave the AI assistant my initial label concepts for the Pinterest Business Community and asked it to identify where boundary confusion was most likely to arise between optimization advice and community rants.
+- *What came back:* The AI pointed out that community members frequently mention metrics (like impressions down 80%) while venting, which creates confusion between strategy discussions and hot takes.
+- *What I changed:* I created a explicit decision rule: numbers must carry the argument (such as an A/B test or systematic comparison) to be classified as `strategy`; numbers cited merely as emotional decoration classify as `hot_take`.
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I asked the assistant to evaluate whether my proposed acceptance criteria were rigorously falsifiable and could be directly checked by inspecting `results.json`.
+- *What came back:* It noted that an abstract standard for model confidence would be subjective, but pointed out that `results.json` directly computes `accuracy_most_confident_third` and `accuracy_least_confident_third`.
+- *What I changed:* I formulated Criterion 5 to specifically require an accuracy >= 0.80 on the top tercile and a separation gap of >= 15 percentage points over the bottom tercile.
 
 **Pre-labelling disclosure:**
+I hand-labelled the first 20 examples cold (`note: cold`) to calibrate my definitions without assistance. For the remaining 180 examples, I used an LLM to generate candidate label suggestions, and then personally read, verified, and adjusted every single row in `labels.csv` before marking them as `pre-labelled, checked`.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
