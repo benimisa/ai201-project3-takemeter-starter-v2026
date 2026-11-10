@@ -51,63 +51,48 @@ whether you hit them:
 
 ---
 
-## 1.
+## 1. Overall test accuracy
 
-<!-- Your criterion. It must name a number. -->
-
-
+The model achieves an overall accuracy of at least 0.70 on the held-out test split.
 
 **Why this target:**
-
-
+With three balanced classes, random guessing yields approximately 0.33. Reaching at least 0.70 accuracy demonstrates that the fine-tuned DistilBERT model has extracted substantive semantic patterns from Pinterest Business posts, reliably identifying the poster's underlying communicative intent for more than 2 out of every 3 held-out posts.
 
 ---
 
-## 2.
+## 2. Per-label F1 floor
 
-<!-- Your criterion. -->
-
-
+Every individual label (`strategy`, `hot_take`, `troubleshooting`) achieves an F1 score of at least 0.60 on the held-out test split.
 
 **Why this target:**
-
-
+In a 30-item test set with ~10 posts per category, a single false positive or negative swings F1 by 5 to 10 points. Setting a hard floor of 0.60 across all three labels prevents the model from collapsing on the difficult boundary between subjective platform speculation (`hot_take`) and test-backed optimization (`strategy`) while only scoring well on distinct technical support requests.
 
 ---
 
-## 3.
+## 3. Dataset class balance
 
-<!-- Your criterion. -->
-
-
+No single label represents more than 40% of the total dataset, and no label represents less than 25% (between 50 and 80 posts per class in a 200-post dataset).
 
 **Why this target:**
-
-
+The course specifies a strict 70% majority ceiling, but in a three-label setup, an even stricter band (25% to 40%) is essential. Because Pinterest forums feature high volumes of emotional venting when algorithm updates roll out, keeping `hot_take`, `strategy`, and `troubleshooting` within 25–40% prevents the model from developing a majority-class guessing heuristic.
 
 ---
 
-## 4.
+## 4. Macro F1 score
 
-<!-- Your criterion. -->
-
-
+The macro-averaged F1 score across all three classes is at least 0.68 on the held-out test split.
 
 **Why this target:**
-
-
+Macro F1 weights each category equally regardless of slight support variations in the 15% test split. A macro F1 target of 0.68 requires consistently high harmonic mean between precision and recall across both the nuanced marketing tactics (`strategy`) and the opinionated platform claims (`hot_take`).
 
 ---
 
-## 5.
+## 5. Confidence separation gap
 
-<!-- Your criterion. -->
-
-
+The model's accuracy on the most-confident third of test predictions is at least 0.80, and is at least 15 percentage points higher than its accuracy on the least-confident third.
 
 **Why this target:**
-
-
+Confidence is tracked directly in `results.json`. If a model's top-tercile confidence does not outperform its lowest tercile by at least 15 percentage points (and reach at least 0.80), its softmax probabilities reflect uncalibrated overconfidence rather than true epistemic certainty on clear vs. borderline Pinterest community posts.
 
 ---
 
