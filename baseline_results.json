@@ -1,0 +1,184 @@
+{
+  "model": "facebook/bart-large-mnli",
+  "n": 30,
+  "seed": 42,
+  "held_out": true,
+  "used_definitions": true,
+  "scores": {
+    "n": 30,
+    "accuracy": 0.8333333333333334,
+    "f1_macro": 0.8317654038477836,
+    "per_label": {
+      "hot_take": {
+        "precision": 1.0,
+        "recall": 0.8,
+        "f1": 0.888888888888889,
+        "support": 10
+      },
+      "strategy": {
+        "precision": 0.7692307692307693,
+        "recall": 1.0,
+        "f1": 0.8695652173913044,
+        "support": 10
+      },
+      "troubleshooting": {
+        "precision": 0.7777777777777778,
+        "recall": 0.7,
+        "f1": 0.7368421052631577,
+        "support": 10
+      }
+    }
+  },
+  "predictions": [
+    {
+      "text": "Hashtags on Pinterest are completely pointless and using them makes your pins look like spam from 2015 that the algorithm demotes.",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Why are my Idea Pins showing 10,000 impressions but literally 0 profile visits in the breakdown analytics tab?",
+      "gold": "troubleshooting",
+      "predicted": "troubleshooting"
+    },
+    {
+      "text": "All my pin impressions dropped to absolute zero starting yesterday morning across every board. How do I verify if my domain has been caught in a spam filter?",
+      "gold": "troubleshooting",
+      "predicted": "troubleshooting"
+    },
+    {
+      "text": "Why are our UTM tracking tags being stripped off pin destination URLs when users open pins inside the Pinterest in-app browser?",
+      "gold": "troubleshooting",
+      "predicted": "strategy"
+    },
+    {
+      "text": "Pin titles under 60 characters prevented mobile viewport truncation and achieved an 11% higher click rate than verbose 100-character titles.",
+      "gold": "strategy",
+      "predicted": "strategy"
+    },
+    {
+      "text": "Creating 4 distinct visual variations (different crops, text overlays, and color palettes) for each blog post URL safely distributed our reach without triggering duplicate content penalties.",
+      "gold": "strategy",
+      "predicted": "strategy"
+    },
+    {
+      "text": "Attempting to reach Pinterest customer support as a non-ad spender is an exercise in absolute futility; free accounts are treated like second-class citizens.",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Organic reach on Pinterest has dropped by 90% across every niche and anyone claiming they still get substantial free traffic is lying to sell a course.",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Optimizing image file names and alt tags with targeted keywords before uploading to Pinterest improved our pin search ranking for long-tail query variations by 26%.",
+      "gold": "strategy",
+      "predicted": "strategy"
+    },
+    {
+      "text": "Cross-referencing search search volume on Pinterest Trends with Google Trends helped us validate evergreen demand before investing in pin asset production.",
+      "gold": "strategy",
+      "predicted": "strategy"
+    },
+    {
+      "text": "If your Pinterest account experiences an impression drop, you are definitely shadowbanned and there is zero chance the algorithm ever restores your reach.",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Our promoted pins are stuck in 'Pending Approval' for 5 days ahead of Black Friday. Is there an expedited support escalation path for ad campaigns?",
+      "gold": "troubleshooting",
+      "predicted": "troubleshooting"
+    },
+    {
+      "text": "Our account billing method was declined despite valid credit card details and bank approval. How do we clear the billing hold?",
+      "gold": "troubleshooting",
+      "predicted": "troubleshooting"
+    },
+    {
+      "text": "Applying consistent brand color palettes across all pins made our profile easily recognizable in the visual search feed, increasing repeat pin clicks by 18%.",
+      "gold": "strategy",
+      "predicted": "strategy"
+    },
+    {
+      "text": "A/B tested font styles: clean sans-serif typography on pin graphics outperformed script or cursive fonts by 40% in outbound click-through rates.",
+      "gold": "strategy",
+      "predicted": "strategy"
+    },
+    {
+      "text": "Pairing promoted collection ads with custom curated lifestyle images drove a 2.8x higher average order value than single item promoted pins.",
+      "gold": "strategy",
+      "predicted": "strategy"
+    },
+    {
+      "text": "Enabled Rich Pins for our Shopify store with verified Open Graph article metadata. Outbound clicks from product pins rose by 22% within three weeks of metadata approval.",
+      "gold": "strategy",
+      "predicted": "strategy"
+    },
+    {
+      "text": "Pinterest's copyright reporting system is a joke; thieves can steal your exact imagery and rank above you while Pinterest takes weeks to respond to DMCA notices.",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Pinterest executives don't care about creator revenue at all; they only care about pleasing Wall Street with inflated ad platform numbers.",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Why did our Pinterest organic search impressions drop by 80% immediately after switching our domain from HTTP to HTTPS?",
+      "gold": "troubleshooting",
+      "predicted": "strategy"
+    },
+    {
+      "text": "The platform's spam filter is so paranoid that pinning three recipes in one afternoon will get your business domain blacklisted for a month.",
+      "gold": "hot_take",
+      "predicted": "troubleshooting"
+    },
+    {
+      "text": "How do I contact Pinterest Partner Support directly when our dedicated ad account representative has not replied in two weeks?",
+      "gold": "troubleshooting",
+      "predicted": "troubleshooting"
+    },
+    {
+      "text": "Tracking Google Analytics UTM parameters showed that traffic coming from Pinterest visual search had a 24% higher page-per-session count than traffic from other social platforms.",
+      "gold": "strategy",
+      "predicted": "strategy"
+    },
+    {
+      "text": "A/B tested direct product landing pages vs editorial blog roundups across 20 promoted pins. The editorial roundups converted at a 1.8% higher rate and lowered cost-per-click from $0.42 to $0.29.",
+      "gold": "strategy",
+      "predicted": "strategy"
+    },
+    {
+      "text": "Manual pinning is completely overrated snake oil peddled by gurus who want you to waste three hours every day clicking buttons.",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "Is anyone else experiencing a problem where Pinterest analytics displays blank gray charts and fails to load data for custom date ranges?",
+      "gold": "troubleshooting",
+      "predicted": "troubleshooting"
+    },
+    {
+      "text": "How do we configure custom conversion events in the Pinterest Tag for multi-step checkout funnels?",
+      "gold": "troubleshooting",
+      "predicted": "strategy"
+    },
+    {
+      "text": "Group boards are 100% dead and keeping any active group boards on your profile is actively poisoning your account's algorithmic distribution.",
+      "gold": "hot_take",
+      "predicted": "hot_take"
+    },
+    {
+      "text": "How do I remove spam comments that are posting malicious links on our top organic pins when the delete comment option fails?",
+      "gold": "troubleshooting",
+      "predicted": "troubleshooting"
+    },
+    {
+      "text": "Pinterest search results have become totally unusable due to infinite spam pins that link to malware and stolen affiliate content.",
+      "gold": "hot_take",
+      "predicted": "troubleshooting"
+    }
+  ]
+}
