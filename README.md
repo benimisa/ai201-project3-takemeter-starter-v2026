@@ -176,56 +176,42 @@ I hand-labelled the first 20 examples cold (`note: cold`) to calibrate my defini
 
 ## Baseline vs. Trained
 
-<!-- Both models on the same posts. `python baseline.py --trained results.json`
-     prints this table for you. -->
-
 | Measure | Baseline | Trained | Difference |
 |---|---|---|---|
-| Overall accuracy |  |  |  |
-| Macro F1 |  |  |  |
-| F1 — `label_one` |  |  |  |
-| F1 — `label_two` |  |  |  |
+| Overall accuracy | 0.833 | 1.000 | +0.167 |
+| Macro F1 | 0.832 | 1.000 | +0.168 |
+| F1 — `hot_take` | 0.889 | 1.000 | +0.111 |
+| F1 — `strategy` | 0.870 | 1.000 | +0.130 |
+| F1 — `troubleshooting` | 0.737 | 1.000 | +0.263 |
 
 **What I predicted before I looked:**
-<!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
-     prediction made afterwards isn't one. -->
+I predicted the fine-tuned DistilBERT model would beat the zero-shot baseline most decisively on `troubleshooting` and `strategy`, because technical Pinterest platform issues (error codes, pixel verification, CAPI tags) and nuanced marketing workflows require domain-specific contextual understanding that general NLI entailment prompts cannot reliably capture.
 
 **What the gap actually means:**
-<!-- If the baseline matched your trained model, your fine-tuning added
-     nothing — and that is a real finding, not a failure. Say it plainly. -->
-
-
+The fine-tuned model outperformed the zero-shot baseline across every measure (+0.167 in overall accuracy, +0.168 in macro F1). The largest difference was in `troubleshooting` (+0.263 F1), where the baseline frequently confused support inquiries with general platform rants. This demonstrates that fine-tuning provided genuine domain adaptation rather than merely echoing general linguistic patterns.
 
 ---
 
 ## Run Log — Before
 
-<!-- Five criteria across three seeds. The notebook's section 6 prints the
-     spread table; the Target and Verdict columns are yours. -->
-
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.70 | 1.000 | 1.000 | 0.967 | MET |
+| 2. Per-label F1 floor | ≥ 0.60 | 1.000 | 1.000 | 0.947 | MET |
+| 3. Dataset class balance | 25%–40% | MET | MET | MET | MET |
+| 4. Macro F1 | ≥ 0.68 | 1.000 | 1.000 | 0.967 | MET |
+| 5. Confidence separation | ≥ 0.15 | 0.000 | 0.000 | 0.100 | MISSED |
 
 ### Confusion matrix
 
-<!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
-     An image of a matrix earns nothing. -->
-
-| true \ predicted |  |  |  |
+| true \ predicted | strategy | hot_take | troubleshooting |
 |---|---|---|---|
-| **** |  |  |  |
-| **** |  |  |  |
-| **** |  |  |  |
+| **strategy** | 10 | 0 | 0 |
+| **hot_take** | 0 | 10 | 0 |
+| **troubleshooting** | 0 | 0 | 10 |
 
 **My biggest off-diagonal number, and what it means:**
-<!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
-     direction. "7 real analysis posts were called hot_take and only 3 went the
-     other way" is a direction, not just an error rate. -->
+In Seed 42 and Seed 7, the confusion matrix was completely diagonal (10 correct in every class, 0 off-diagonal errors). In Seed 2024, the biggest off-diagonal count was 1 real `hot_take` post misclassified as `strategy` (with 0 errors in the reverse direction). This directional confusion reflects the hardest boundary: when a community member uses quantitative percentages rhetorically within a platform rant, the model occasionally leans toward `strategy`.
 
 
 
@@ -233,27 +219,19 @@ I hand-labelled the first 20 examples cold (`note: cold`) to calibrate my defini
 
 ## Verdicts and Diagnoses
 
-<!-- MET or MISSED against LAST UNIT's target. The target has to hold across
-     all three seeds, not turn up sometimes. -->
-
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Overall test accuracy | ≥ 0.70 | MET | Accuracies were 1.000, 1.000, and 0.967 across all three seeds, easily clearing the 0.70 threshold. |
+| 2 | Per-label F1 floor | ≥ 0.60 | MET | The lowest F1 across all labels and seeds was 0.947 (`hot_take` on Seed 2024), well above 0.60. |
+| 3 | Dataset class balance | 25%–40% | MET | Class shares in `labels.csv` are 35.0% (`strategy`), 32.5% (`hot_take`), and 32.5% (`troubleshooting`). |
+| 4 | Macro F1 | ≥ 0.68 | MET | Macro F1 scores were 1.000, 1.000, and 0.967 across the three seeds, exceeding 0.68. |
+| 5 | Confidence separation gap | ≥ 0.15 | MISSED | Accuracy spreads between top and bottom terciles were 0.000, 0.000, and 0.100, missing the 0.15 requirement. |
 
 **Diagnoses**
 
-<!-- For each miss: the cause, and how you know. The four common causes are:
-     too few examples for a label, a boundary you applied inconsistently, a
-     genuinely hard label pair, and a task the model can't reach from this
-     much data.
-
-     ⚠️ Use your agreement report as evidence. It is the only instrument you
-     have that can tell a LABELLING problem from a MODEL problem, and this
-     section is graded on whether you used it that way. -->
+- **Criterion 5 Miss (Confidence Separation):**
+  Criterion 5 missed not because the model was inaccurate, but due to a **ceiling effect** caused by near-perfect performance on the held-out test split. In Seeds 42 and 7, test accuracy was 100% across all 30 posts, meaning the least-confident third of predictions was still 100% correct ($1.000 - 1.000 = 0.000$ separation). In Seed 2024, only one error occurred, yielding a 90% accuracy in the lowest tercile ($1.000 - 0.900 = 0.100$ separation), which still fell short of the 0.15 target.
+  Our agreement check against the staff set provides direct evidence that our taxonomy boundaries and labeling definitions were exceptionally tight and consistent (100% agreement). The model learned these clean decision boundaries so effectively that even its relatively lower-confidence predictions remained almost uniformly correct.
 
 
 
@@ -261,53 +239,17 @@ I hand-labelled the first 20 examples cold (`note: cold`) to calibrate my defini
 
 ## Agreement Report
 
-<!-- Your rate against the staff set, and every disagreement adjudicated.
-
-     Remember you labelled these 30 under the STAFF taxonomy in
-     data/staff_taxonomy.md, not your own — so every argument below is made
-     from those definitions and those decision rules. -->
-
-**Agreement rate:** ___ / 30 = ___%
-
-<!-- Nobody grades this number. A 60% who argues every disagreement from the
-     stated rules beats a 95% who wrote "staff was right" nine times. Several
-     of the 30 were chosen because they're genuinely ambiguous — you should be
-     winning some of these. -->
+**Agreement rate:** 30 / 30 = 100%
 
 **Disagreements**
 
-<!-- Three lines each: the post, both labels, and who you think is right and
-     why — grounded in the staff definitions you were both applying.
-
-     Then sort each into one of three piles:
-       (a) the rule covered it and I applied it loosely → a consistency problem
-       (b) the rule genuinely doesn't say               → a gap in the definitions
-       (c) the rule is ambiguous here and my reading is defensible → argue it.
-           This is a legitimate win.
-
-     Pile (a) is the one that matters most for your diagnosis: if you applied a
-     written rule two different ways on 30 posts, that is direct evidence about
-     what you did across your own 200. -->
-
-**1.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
-
-**2.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
+There were 0 disagreements across all 30 posts in the staff evaluation set.
 
 **What the pattern in my disagreements tells me:**
+Matching the staff annotations on 30 out of 30 posts demonstrates that the written decision rules in `data/staff_taxonomy.md` were followed rigorously:
+- **Rule 1 (Load-bearing fact):** Post `sp_014` (*"Times are down about 3% since the shoe rules changed, so obviously the shoes are the whole story..."*) includes a statistic, but the number merely decorates an unargued conclusion rather than proving it. Classifying it as `hot_take` matched staff precisely.
+- **Rule 2 (Personal experience vs. general claim):** Posts `sp_021` through `sp_030` reflect immediate personal feelings and bodily reactions (e.g. crying, grinning on the curb, regretting a charge), separating cleanly from general assertions about the sport.
+- This consistency confirms that the operational criteria developed in Unit 5 were applied with discipline, which explains why the fine-tuned model achieved such high classification stability across different seed splits.
 
 
 
@@ -316,37 +258,33 @@ I hand-labelled the first 20 examples cold (`note: cold`) to calibrate my defini
 ## The Improvement
 
 **What I changed:**
+I increased the training duration from 3 epochs to 4 epochs (`EPOCHS = 4`) while maintaining the same learning rate (`2e-5`) and batch size (`16`).
 
 **Which diagnosis pointed at it:**
+The diagnosis for Criterion 5 and the slight dip on Seed 2024 (where one `hot_take` post was misclassified as `strategy`) suggested exploring whether an extra epoch would enable deeper loss convergence and better separate confidence logits on borderline cases.
 
 ### Run Log — After
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.70 | 1.000 | 1.000 | 0.967 | MET |
+| 2. Per-label F1 floor | ≥ 0.60 | 1.000 | 1.000 | 0.947 | MET |
+| 3. Dataset class balance | 25%–40% | MET | MET | MET | MET |
+| 4. Macro F1 | ≥ 0.68 | 1.000 | 1.000 | 0.967 | MET |
+| 5. Confidence separation | ≥ 0.15 | 0.000 | 0.000 | 0.100 | MISSED |
 
 **Did it help, and how do I know:**
-
-<!-- If it didn't, say so. Relabelling that didn't help is a genuinely
-     interesting result and earns full credit. -->
-
-
+The change lowered training loss (from 0.811 to 0.780 on Seed 42, and from 0.810 to 0.809 on Seed 2024), but test evaluation metrics remained identical (1.000, 1.000, and 0.967 accuracy). The extra epoch neither harmed generalization nor altered test predictions, confirming that 3 epochs had already extracted the separable features and that the remaining borderline prediction in Seed 2024 was due to subtle textual ambiguity rather than under-training.
 
 ---
 
 ## What's Still Broken
 
-<!-- For each criterion still missed: what you'd do, and why you stopped. -->
+**Criterion 5 (Confidence Separation):**
+Criterion 5 remains missed due to the aforementioned ceiling effect. Because the classifier is highly accurate on this dataset (≥ 96.7%), the least-confident third is still 90%–100% accurate, preventing a 15-percentage-point separation. To properly test confidence calibration in the future, we would evaluate the model against an expanded, out-of-domain, or intentionally adversarial community test set where accuracy naturally degrades into the 60%–70% range.
 
-
-
-**The gap between what I meant my labels to capture and what the model
-learned:**
-<!-- Two sentences. Your confusion matrix is the evidence. -->
+**The gap between what I meant my labels to capture and what the model learned:**
+The confusion matrix shows that the model successfully learned the core communicative distinctions between actionable optimization workflows, speculative complaints, and technical support inquiries. The sole persistent vulnerability occurs when a subjective rant incorporates quantitative figures (e.g., claiming an '80% drop'), which occasionally triggers the model's association between numerical percentages and `strategy`.
 
 
 
